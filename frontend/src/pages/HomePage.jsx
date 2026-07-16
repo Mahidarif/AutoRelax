@@ -8,7 +8,7 @@ import { getErrorMessage } from '../utils/helpers';
 import heroSd from '../assests/images/hero-sd.png';
 import heroSd1 from '../assests/images/hero-sd2.png';
 import backgroundImage from '../assests/images/hero-bg.jpg';
-import aboutUs1 from '../assests/images/aboutus1.jpg';
+import aboutUs1 from '../assests/images/aboutUs1.jpg';
 import aboutUs2 from '../assests/images/AboutUs2.jpg';
 import AskMeBanner from '../components/AskMeBanner';
 
