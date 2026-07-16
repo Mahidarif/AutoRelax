@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
@@ -7,9 +7,14 @@ import { formatPrice, getErrorMessage } from '../utils/helpers';
 
 const OrderPage = () => {
   const { id } = useParams();
+  const location = useLocation();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const searchParams = new URLSearchParams(location.search);
+  const paymentStatus = searchParams.get('payment');
+  const paymentMessage = searchParams.get('message');
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -32,13 +37,21 @@ const OrderPage = () => {
   return (
     <div className="page container order-page">
       <h1>Order Confirmation</h1>
-      <Message variant="success">Thank you! Your order has been placed.</Message>
+      
+      {paymentStatus === 'success' ? (
+        <Message variant="success">Payment succeeded! Thank you for your purchase.</Message>
+      ) : paymentStatus === 'failed' ? (
+        <Message variant="error">Payment failed: {paymentMessage || 'Transaction was declined.'}</Message>
+      ) : (
+        <Message variant="success">Thank you! Your order has been placed.</Message>
+      )}
 
       <div className="order-detail">
         <section>
           <h2>Order #{order._id.slice(-6).toUpperCase()}</h2>
           <p>Placed on {new Date(order.createdAt).toLocaleString()}</p>
-          <p>Payment: {order.isPaid ? `Paid on ${new Date(order.paidAt).toLocaleString()}` : 'Pending'}</p>
+          <p>Payment Method: {order.paymentMethod}</p>
+          <p>Payment Status: {order.isPaid ? `Paid on ${new Date(order.paidAt).toLocaleString()}` : 'Pending'}</p>
           <p>Delivery: {order.isDelivered ? 'Delivered' : 'Not delivered yet'}</p>
         </section>
 
@@ -58,22 +71,16 @@ const OrderPage = () => {
         </section>
 
         <section>
-          <h3>Shipping</h3>
-          <p>{order.shippingAddress.address}</p>
-          <p>
-            {order.shippingAddress.city}, {order.shippingAddress.postalCode}
-          </p>
-          <p>{order.shippingAddress.country}</p>
+          <h3>Shipping & Customer Details</h3>
+          <p><strong>Name:</strong> {order.shippingAddress.fullName}</p>
+          <p><strong>Email:</strong> {order.shippingAddress.email}</p>
+          <p><strong>Address:</strong> {order.shippingAddress.address}, {order.shippingAddress.city}, {order.shippingAddress.postalCode}, {order.shippingAddress.country}</p>
         </section>
 
         <aside className="cart-summary">
           <div className="summary-row">
             <span>Items</span>
             <span>{formatPrice(order.itemsPrice)}</span>
-          </div>
-          <div className="summary-row">
-            <span>Tax</span>
-            <span>{formatPrice(order.taxPrice)}</span>
           </div>
           <div className="summary-row">
             <span>Shipping</span>

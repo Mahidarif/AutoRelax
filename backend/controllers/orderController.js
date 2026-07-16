@@ -2,19 +2,19 @@ import Order from '../models/Order.js';
 import Product from '../models/Product.js';
 
 export const addOrderItems = async (req, res) => {
-  const { orderItems, shippingAddress, paymentMethod } = req.body;
+  const { orderItems, shippingAddress, paymentMethod, shippingOption } = req.body;
 
   if (!orderItems?.length) {
     return res.status(400).json({ message: 'No order items' });
   }
 
   const itemsPrice = orderItems.reduce((acc, item) => acc + item.price * item.qty, 0);
-  const taxPrice = Number((itemsPrice * 0.1).toFixed(2));
-  const shippingPrice = itemsPrice > 100 ? 0 : 10;
-  const totalPrice = itemsPrice + taxPrice + shippingPrice;
+  const taxPrice = 0;
+  const shippingPrice = shippingOption === 'pickup' ? 0 : 250;
+  const totalPrice = itemsPrice + shippingPrice;
 
   const order = new Order({
-    user: req.user._id,
+    user: req.user?._id || null,
     orderItems,
     shippingAddress,
     paymentMethod,

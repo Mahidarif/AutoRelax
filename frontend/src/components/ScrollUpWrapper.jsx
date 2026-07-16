@@ -36,9 +36,9 @@ export default function ScrollUpWrapper({ children }) {
           aria-label="Scroll to top"
           style={{
             position: 'fixed',
-            bottom: '200px',
-            right: '40px',
-            zIndex: 1000,
+            bottom: '2rem',
+            right: '2rem',
+            zIndex: 999,
             backgroundColor: '#0e3d5b', // Matches your Navigation header color
             color: 'white',
             border: 'none',

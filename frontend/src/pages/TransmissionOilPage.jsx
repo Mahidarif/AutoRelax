@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import ProductCard from '../components/ProductCard';
 import SortBy from '../components/SortBy';
@@ -6,8 +7,10 @@ import SearchProducts from '../components/SearchProducts';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { getErrorMessage } from '../utils/helpers';
+import AskMeBanner from '../components/AskMeBanner';
 
 const TransmissionOilPage = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -18,7 +21,7 @@ const TransmissionOilPage = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const { data } = await api.get('/products?category=transmission-oil');
+        const { data } = await api.get('/products?category=Transmission Oil');
         setProducts(data.products || []);
         setError('');
       } catch (err) {
@@ -31,24 +34,10 @@ const TransmissionOilPage = () => {
     fetchProducts();
   }, []);
 
-  // Mock products for frontend display
-  const mockProducts = [
-    { _id: '1', name: 'ATF Type F Transmission Fluid', price: 3500, countInStock: 10 },
-    { _id: '2', name: 'Synthetic Transmission Oil', price: 4800, countInStock: 8 },
-    { _id: '3', name: 'CVT Transmission Fluid', price: 4200, countInStock: 15 },
-    { _id: '4', name: 'Dual Clutch Transmission Oil', price: 5500, countInStock: 6 },
-    { _id: '5', name: 'Manual Transmission Oil', price: 2900, countInStock: 20 },
-    { _id: '6', name: 'Automatic Transmission Fluid', price: 3800, countInStock: 12 },
-  ];
-
-  const displayProducts = products.length > 0 ? products : mockProducts;
-
-  // Filter products based on search query
-  const filteredProducts = displayProducts.filter(product =>
+  const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Sort products based on sort option
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
       case 'price-low':
@@ -74,8 +63,7 @@ const TransmissionOilPage = () => {
           <h1 style={{ fontSize: '2.75rem', fontWeight: '900', color: '#0e3d5b', marginBottom: '2rem', textAlign: 'center' }}>
             Transmission Oil
           </h1>
-          
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
+          <div className="shop-controls">
             <SortBy value={sortBy} onChange={setSortBy} />
             <SearchProducts value={searchQuery} onChange={setSearchQuery} />
           </div>
@@ -95,6 +83,7 @@ const TransmissionOilPage = () => {
           )}
         </div>
       </section>
+      <AskMeBanner className="ask-me-banner" onClick={() => navigate('/contact')} />
     </div>
   );
 };

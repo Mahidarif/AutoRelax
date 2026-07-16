@@ -1,0 +1,32 @@
+# React Component Architect Skill
+
+This skill guides the AI agent on how to architect, design, and implement premium React components with exceptional aesthetics, responsiveness, performance, and accessibility.
+
+## 1. Design & Aesthetic Principles
+*   **Vibrant Color Palettes:** Never use plain colors. Use tailored color systems, HSL values, sleek dark modes, and subtle gradients (e.g., `#0e3d5b` for secondary/deep text, `#e8721b` for active/brand accent, and soft greys/concrete textures).
+*   **Typography:** Always prioritize modern fonts (e.g., DM Sans, Inter, system-ui) over browser default serifs.
+*   **Glassmorphism & Shadows:** Integrate premium blur effects (`backdrop-filter`) and smooth shadows (`box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08)`) instead of flat borders where appropriate.
+*   **Interactive Enhancements:** Apply micro-animations (e.g., hover scaling, slide-up entry, spin-fade animations) using CSS or framer-motion.
+
+## 2. Component Architecture
+*   **Atomic Design:** Keep components single-purpose and reusable. Break down larger page views into smaller sub-components (e.g., separating the hero slideshow container, product cards, inputs).
+*   **State Management:** Always use appropriate hook primitives:
+    *   `useState` for localized UI state.
+    *   `useRef` for side-effect tracking, timers, or direct DOM references.
+    *   `useCallback` for memoizing event handlers passed to child elements to prevent unnecessary re-renders.
+    *   `useEffect` cleanup: Always clear intervals, event listeners, and abort requests.
+
+## 3. SEO & Accessibility (a11y)
+*   **Semantic HTML:** Leverage HTML5 tags (`<section>`, `<article>`, `<header>`, `<footer>`, `<main>`).
+*   **Accessibility:** Ensure every interactive element has descriptive `aria-label` tags. Images must contain custom `alt` descriptions.
+
+## 4. Layout & Responsiveness
+*   **Edge-to-Edge breaking:** When a block must span the full viewport width inside a padded main container, use negative margins:
+    ```css
+    .break-out {
+      margin-left: -2rem;
+      margin-right: -2rem;
+      width: calc(100% + 4rem);
+    }
+    ```
+*   **Mobile-First Adaptability:** Build modular layouts using Flexbox or CSS Grid, and use media queries (`@media (max-width: 768px)`) to optimize mobile experiences.

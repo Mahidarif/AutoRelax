@@ -31,13 +31,13 @@ const ContactPage = () => {
 
   return (
     <div className="page">
-      <h2 style={{ fontSize: '2.75rem', fontWeight: '900', color: '#0e3d5b', margin: 'auto' }}>
+      <h2 style={{ fontSize: '2.75rem', fontWeight: '900', color: '#0e3d5b', margin: '2rem auto', textAlign: 'center' }}>
         Contact Us
       </h2>
       {/* Contact Section */}
       <section style={{ padding: '3.5rem 0', background: '#fff' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', alignItems: 'start' }}>
+          <div className="contact-grid">
             {/* Contact Form */}
             <div>
               <h2 style={{ fontSize: '1.75rem', fontWeight: '900', color: '#0e3d5b', marginBottom: '1.5rem' }}>
@@ -158,9 +158,9 @@ const ContactPage = () => {
                 Contact Information
               </h2>
 
-              <div style={{ display: 'grid', gap: '2rem' }}>
+              <div style={{ display: 'grid', gap: '1.5rem' }}>
                 {/* Customer Care */}
-                <div style={{ background: '#f4f4f4', padding: '2rem', borderRadius: '16px' }}>
+                <div className="contact-card">
                   <h3 style={{ color: '#0e3d5b', marginBottom: '0.75rem', fontWeight: '700' }}>
                     Customer Care
                   </h3>
@@ -168,12 +168,12 @@ const ContactPage = () => {
                     03117229090
                   </p>
                   <p style={{ fontSize: '0.95rem', color: '#64748b', marginTop: '0.5rem' }}>
-                    Available 9 AM - 6 PM, Mon-Sat
+                    Available 9 AM - 6 PM, Monday-Sunday
                   </p>
                 </div>
 
                 {/* Address */}
-                <div style={{ background: '#f4f4f4', padding: '2rem', borderRadius: '16px' }}>
+                <div className="contact-card">
                   <h3 style={{ color: '#0e3d5b', marginBottom: '0.75rem', fontWeight: '700' }}>
                     Address
                   </h3>
@@ -185,7 +185,7 @@ const ContactPage = () => {
                 </div>
 
                 {/* Email */}
-                <div style={{ background: '#f4f4f4', padding: '2rem', borderRadius: '16px' }}>
+                <div className="contact-card">
                   <h3 style={{ color: '#0e3d5b', marginBottom: '0.75rem', fontWeight: '700' }}>
                     Email
                   </h3>
@@ -198,15 +198,12 @@ const ContactPage = () => {
                 </div>
 
                 {/* Business Hours */}
-                <div style={{ background: '#e8721b', color: '#fff', padding: '2rem', borderRadius: '16px' }}>
+                <div className="contact-card highlight">
                   <h3 style={{ marginBottom: '0.75rem', fontWeight: '700' }}>
                     Business Hours
                   </h3>
                   <p style={{ fontSize: '0.95rem', marginBottom: '0.5rem' }}>
-                    Monday - Saturday: 9:00 AM - 6:00 PM
-                  </p>
-                  <p style={{ fontSize: '0.95rem' }}>
-                    Sunday: Closed
+                    Monday - Sunday: 9:00 AM - 6:00 PM
                   </p>
                 </div>
               </div>

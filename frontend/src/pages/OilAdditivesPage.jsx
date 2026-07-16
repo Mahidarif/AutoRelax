@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import ProductCard from '../components/ProductCard';
 import SortBy from '../components/SortBy';
@@ -6,38 +7,63 @@ import SearchProducts from '../components/SearchProducts';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { getErrorMessage } from '../utils/helpers';
+import AskMeBanner from '../components/AskMeBanner';
+
 
 const OilAdditivesPage = () => {
+  const { category: urlCategory } = useParams();
+  const navigate = useNavigate();
+
+  const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [subcategory, setSubcategory] = useState('');
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [sortBy, setSortBy] = useState('recent');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const subcategories = [
-    'Engine Oil',
-    'Transmission Fluid',
-    'Coolant',
-    'Power Steering Fluid',
-    'Brake Fluid'
-  ];
+  // Resolve selected category from URL param
+  const activeCategory = urlCategory ? decodeURIComponent(urlCategory) : '';
 
+  // Helper to map route categories to normalized values
+  const getNormalizedCategory = (routeVal) => {
+    if (!routeVal) return '';
+    const lower = routeVal.toLowerCase();
+    if (lower === 'brake-oil' || lower === 'brake oil') return 'Brake Oil';
+    if (lower === 'coolants') return 'Coolants';
+    if (lower === 'transmission-oil' || lower === 'transmission oil') return 'Transmission Oil';
+    return routeVal;
+  };
+
+  const selectedCategory = getNormalizedCategory(activeCategory);
+
+  // Fetch categories on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await api.get('/products/categories');
+        setCategories(data.filter(Boolean));
+      } catch (err) {
+        console.error('Failed to fetch categories:', err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Fetch products when selected category or page changes
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const params = new URLSearchParams({ 
-          page,
-          category: 'Oil & Additives'
-        });
-        if (subcategory) params.append('keyword', subcategory);
+        const params = new URLSearchParams({ page });
+        if (selectedCategory) {
+          params.append('category', selectedCategory);
+        }
 
         const { data } = await api.get(`/products?${params}`);
-        setProducts(data.products);
-        setPages(data.pages);
+        setProducts(data.products || []);
+        setPages(data.pages || 1);
         setError('');
       } catch (err) {
         setError(getErrorMessage(err));
@@ -47,28 +73,30 @@ const OilAdditivesPage = () => {
     };
 
     fetchProducts();
-  }, [subcategory, page]);
+  }, [selectedCategory, page]);
 
-  // Mock products for frontend display
-  const mockProducts = [
-    { _id: '1', name: 'Premium Engine Oil 5W-30', price: 4500, countInStock: 10 },
-    { _id: '2', name: 'Synthetic Motor Oil', price: 5200, countInStock: 8 },
-    { _id: '3', name: 'Diesel Engine Oil', price: 3800, countInStock: 15 },
-    { _id: '4', name: 'Power Steering Fluid', price: 2200, countInStock: 20 },
-    { _id: '5', name: 'Brake Fluid DOT 3', price: 1800, countInStock: 25 },
-    { _id: '6', name: 'Engine Oil Additive', price: 1500, countInStock: 30 },
-    { _id: '7', name: 'Fuel System Cleaner', price: 1200, countInStock: 40 },
-    { _id: '8', name: 'Oil Treatment', price: 950, countInStock: 35 },
-  ];
+  const handleCategoryClick = (cat) => {
+    if (!cat) {
+      navigate('/oil-additives');
+    } else {
+      const lower = cat.toLowerCase();
+      if (lower === 'brake oil') {
+        navigate('/oil-additives/brake-oil');
+      } else if (lower === 'coolants') {
+        navigate('/oil-additives/coolants');
+      } else if (lower === 'transmission oil') {
+        navigate('/oil-additives/transmission-oil');
+      } else {
+        navigate(`/oil-additives/${encodeURIComponent(cat)}`);
+      }
+    }
+    setPage(1);
+  };
 
-  const displayProducts = products.length > 0 ? products : mockProducts;
-
-  // Filter products based on search query
-  const filteredProducts = displayProducts.filter(product =>
+  const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Sort products based on sort option
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
       case 'price-low':
@@ -89,13 +117,11 @@ const OilAdditivesPage = () => {
 
   return (
     <div className="page">
-      {/* Products Section */}
       <section className="container shop-section">
         <h2 style={{ fontSize: '2.75rem', fontWeight: '900', color: '#0e3d5b', marginBottom: '2rem', textAlign: 'center' }}>
-          Our Selection
+          {selectedCategory || 'Our Selection'}
         </h2>
-        
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <div className="shop-controls">
           <SortBy value={sortBy} onChange={setSortBy} />
           <SearchProducts value={searchQuery} onChange={setSearchQuery} />
         </div>
@@ -103,25 +129,19 @@ const OilAdditivesPage = () => {
         <div className="filters">
           <button
             type="button"
-            className={`filter-btn ${!subcategory ? 'active' : ''}`}
-            onClick={() => {
-              setSubcategory('');
-              setPage(1);
-            }}
+            className={`filter-btn ${!selectedCategory ? 'active' : ''}`}
+            onClick={() => handleCategoryClick('')}
           >
             All Products
           </button>
-          {subcategories.map((sub) => (
+          {categories.map((cat) => (
             <button
-              key={sub}
+              key={cat}
               type="button"
-              className={`filter-btn ${subcategory === sub ? 'active' : ''}`}
-              onClick={() => {
-                setSubcategory(sub);
-                setPage(1);
-              }}
+              className={`filter-btn ${selectedCategory === cat ? 'active' : ''}`}
+              onClick={() => handleCategoryClick(cat)}
             >
-              {sub}
+              {cat}
             </button>
           ))}
         </div>
@@ -166,6 +186,7 @@ const OilAdditivesPage = () => {
           </>
         )}
       </section>
+      <AskMeBanner className="ask-me-banner" onClick={() => navigate('/contact')} />
     </div>
   );
 };

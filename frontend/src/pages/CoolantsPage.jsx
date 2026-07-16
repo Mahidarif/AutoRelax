@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import ProductCard from '../components/ProductCard';
 import SortBy from '../components/SortBy';
@@ -6,8 +7,10 @@ import SearchProducts from '../components/SearchProducts';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { getErrorMessage } from '../utils/helpers';
+import AskMeBanner from '../components/AskMeBanner';
 
 const CoolantsPage = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -18,7 +21,7 @@ const CoolantsPage = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const { data } = await api.get('/products?category=coolants');
+        const { data } = await api.get('/products?category=Coolants');
         setProducts(data.products || []);
         setError('');
       } catch (err) {
@@ -31,24 +34,10 @@ const CoolantsPage = () => {
     fetchProducts();
   }, []);
 
-  // Mock products for frontend display
-  const mockProducts = [
-    { _id: '1', name: 'Premium Coolant Blue', price: 1500, countInStock: 15 },
-    { _id: '2', name: 'Long Life Coolant', price: 2200, countInStock: 10 },
-    { _id: '3', name: 'Anti-Freeze Coolant', price: 1800, countInStock: 20 },
-    { _id: '4', name: 'Organic Acid Technology Coolant', price: 2800, countInStock: 8 },
-    { _id: '5', name: 'Heavy Duty Coolant', price: 3200, countInStock: 12 },
-    { _id: '6', name: 'Universal Coolant', price: 1900, countInStock: 18 },
-  ];
-
-  const displayProducts = products.length > 0 ? products : mockProducts;
-
-  // Filter products based on search query
-  const filteredProducts = displayProducts.filter(product =>
+  const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Sort products based on sort option
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
       case 'price-low':
@@ -74,8 +63,7 @@ const CoolantsPage = () => {
           <h1 style={{ fontSize: '2.75rem', fontWeight: '900', color: '#0e3d5b', marginBottom: '2rem', textAlign: 'center' }}>
             Coolants
           </h1>
-
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
+          <div className="shop-controls">
             <SortBy value={sortBy} onChange={setSortBy} />
             <SearchProducts value={searchQuery} onChange={setSearchQuery} />
           </div>
@@ -95,6 +83,7 @@ const CoolantsPage = () => {
           )}
         </div>
       </section>
+      <AskMeBanner className="ask-me-banner" onClick={() => navigate('/contact')} />
     </div>
   );
 };
