@@ -35,10 +35,10 @@ const PORT = process.env.PORT || 5000;
 const path = require('path');
 
 // Render will automatically create the 'dist' folder during deployment
-app.use(express.static(path.join(__dirname, 'Frontend/dist')));
+app.use(express.static(path.join(__dirname, 'frontend/dist')));
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'Frontend/dist', 'index.html'));
+  res.sendFile(path.join(__dirname, 'frontend/dist', 'index.html'));
 });
 
 
